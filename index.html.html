@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Muriaé - Notícias de Muriaé e Zona da Mata</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#1E293B',
+                            900: '#0F172A',
+                            950: '#020617',
+                        },
+                        brand: {
+                            red: '#DC2626',
+                            redHover: '#B91C1C',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* Ticker animation */
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+        .ticker-wrap {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .ticker-move {
+            display: inline-block;
+            white-space: nowrap;
+            animation: ticker 35s linear infinite;
+        }
+        .ticker-wrap:hover .ticker-move {
+            animation-play-state: paused;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="pt-[52px] md:pt-[44px]">
+
+    <!-- ========================================== -->
+    <!-- ABSOLUTE TOP MANDATORY FIXED RED DISCLAIMER -->
+    <!-- ========================================== -->
+    <div id="mandatory-disclaimer-banner" class="fixed top-0 left-0 right-0 z-[9999] bg-red-600 text-white font-black text-center py-2 px-4 shadow-md text-xs sm:text-sm md:text-base border-b-2 border-red-800 uppercase tracking-wide leading-snug">
+        PROJETO FICTÍCIO - MODELO DE TREINO FEITO COM IA PARA AULA - NÃO É NOTÍCIA REAL - NOTÍCIAS FICTÍCIAS CRIADAS PARA FINS EDUCACIONAIS
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="bg-navy-900 text-white border-b border-slate-800 sticky top-[52px] md:top-[44px] z-40 shadow-lg">
+        <!-- Top bar with Date, Weather snippet & Utility links -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 border-b border-slate-800/60 text-xs text-slate-300 flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-4">
+                <span id="current-date" class="font-medium"><i class="far fa-calendar-alt text-brand-red mr-1.5"></i> Carregando data...</span>
+                <span class="hidden sm:inline-block text-slate-600">|</span>
+                <span class="hidden sm:flex items-center"><i class="fas fa-map-marker-alt text-brand-red mr-1.5"></i> Muriaé, MG</span>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center text-slate-200">
+                    <i class="fas fa-cloud-sun text-yellow-400 mr-1.5 text-sm"></i>
+                    <span>Muriaé <strong class="text-white">28°C</strong></span>
+                </div>
+                <span class="text-slate-600">|</span>
+                <div class="flex space-x-2 text-slate-400">
+                    <a href="#" class="hover:text-white transition-colors" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="hover:text-white transition-colors" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="hover:text-white transition-colors" title="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Branding & Search Area -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <!-- Brand Logo -->
+            <a href="#" onclick="filterCategory('todos')" class="flex items-center space-x-3 group">
+                <div class="bg-brand-red text-white p-2.5 rounded-lg shadow-md group-hover:bg-red-700 transition-colors">
+                    <i class="fas fa-newspaper text-2xl md:text-3xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black tracking-tight text-white uppercase font-sans">
+                        PORTAL <span class="text-brand-red">MURIAÉ</span>
+                    </h1>
+                    <p class="text-[10px] sm:text-xs text-slate-400 font-medium tracking-wider uppercase">O Jornal Digital da Zona da Mata</p>
+                </div>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="w-full md:w-80 relative">
+                <input type="text" id="search-input" placeholder="Buscar notícias de Muriaé..." 
+                    class="w-full bg-navy-800 text-white text-sm rounded-full pl-10 pr-4 py-2 border border-slate-700 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-all placeholder-slate-400">
+                <i class="fas fa-search absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
+                <button id="clear-search" onclick="clearSearch()" class="hidden absolute right-3 top-2 text-slate-400 hover:text-white text-xs">
+                    <i class="fas fa-times-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="bg-navy-950 border-t border-slate-800/80">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between overflow-x-auto py-2 scrollbar-none" id="categories-nav">
+                    <!-- Nav tabs filled dynamically or static -->
+                    <button onclick="filterCategory('todos')" class="cat-btn active font-semibold text-xs sm:text-sm whitespace-nowrap px-3 py-1.5 rounded-md text-white bg-brand-red transition-all">Últimas Notícias</button>
+                    <button onclick="filterCategory('Cidade')" class="cat-btn font-medium text-xs sm:text-sm whitespace-nowrap px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-all">Cidade</button>
+                    <button onclick="filterCategory('Região')" class="cat-btn font-medium text-xs sm:text-sm whitespace-nowrap px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-all">Região</button>
+                    <button onclick="filterCategory('Política')" class="cat-btn font-medium text-xs sm:text-sm whitespace-nowrap px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-all">Política</button>
+                    <button onclick="filterCategory('Economia')" class="cat-btn font-medium text-xs sm:text-sm whitespace-nowrap px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-all">Economia</button>
+                    <button onclick="filterCategory('Esporte')" class="cat-btn font-medium text-xs sm:text-sm whitespace-nowrap px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-all">Esporte</button>
+                    <button onclick="filterCategory('Cultura')" class="cat-btn font-medium text-xs sm:text-sm whitespace-nowrap px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-all">Cultura & Eventos</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- BREAKING NEWS TICKER -->
+    <section class="bg-slate-900 text-white border-b border-slate-800 flex items-center shadow-inner overflow-hidden">
+        <div class="bg-brand-red text-white font-bold text-xs uppercase px-3 py-2 flex items-center space-x-1.5 shrink-0 z-10 shadow-md">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+            </span>
+            <span class="tracking-wide">URGENTE</span>
+        </div>
+        <div class="ticker-wrap w-full py-1.5 text-xs text-slate-200">
+            <div class="ticker-move flex items-center space-x-8" id="ticker-content">
+                <!-- Ticker items dynamically injected -->
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN PORTAL CONTENT AREA -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- SEARCH STATUS BAR (Visible when searching) -->
+        <div id="search-status-bar" class="hidden mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex justify-between items-center">
+            <p class="text-sm text-slate-700">Resultados da busca por: <strong id="search-keyword" class="text-navy-900"></strong></p>
+            <button onclick="clearSearch()" class="text-xs text-brand-red hover:underline font-semibold flex items-center">
+                <i class="fas fa-times mr-1"></i> Limpar Busca
+            </button>
+        </div>
+
+        <!-- HERO / HIGHLIGHTS SECTION -->
+        <section id="highlights-section" class="mb-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Main Featured Story (Big Hero Card) -->
+                <div class="lg:col-span-8 group cursor-pointer" onclick="openArticleModal(1)">
+                    <div class="relative rounded-2xl overflow-hidden shadow-lg bg-slate-900 aspect-video md:aspect-[16/9]">
+                        <img id="hero-img" src="https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=1200&q=80" alt="Novo Parque Ecológico" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent"></div>
+                        <div class="absolute bottom-0 p-5 md:p-8 w-full">
+                            <span class="inline-block bg-brand-red text-white text-xs font-bold uppercase px-3 py-1 rounded-full mb-3 shadow">
+                                Cidade
+                            </span>
+                            <h2 class="text-xl sm:text-2xl md:text-4xl font-extrabold text-white leading-tight mb-2 group-hover:text-red-300 transition-colors">
+                                Muriaé ganha novo Parque Ecológico com pista de caminhada e reflorestamento na BR-116
+                            </h2>
+                            <p class="text-slate-300 text-xs sm:text-sm line-clamp-2 hidden sm:block mb-3 font-normal">
+                                Obra modelo tem mais de 45 mil metros quadrados de área verde, lago artificial e iluminação LED sustentável para toda a comunidade.
+                            </p>
+                            <div class="flex items-center text-xs text-slate-400 space-x-4">
+                                <span><i class="far fa-clock mr-1"></i> Há 25 minutos</span>
+                                <span><i class="far fa-user mr-1"></i> Redação Muriaé</span>
+                                <span><i class="far fa-comment mr-1"></i> 14 comentários</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Hero Articles (Stacked Right) -->
+                <div class="lg:col-span-4 flex flex-col justify-between space-y-4">
+                    <!-- Secondary Article 1 -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow cursor-pointer flex gap-4 group" onclick="openArticleModal(2)">
+                        <div class="w-28 h-24 rounded-lg overflow-hidden shrink-0 bg-slate-100">
+                            <img src="https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=400&q=80" alt="Mercado Produtor" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        </div>
+                        <div class="flex flex-col justify-between">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-brand-red">Economia</span>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug">
+                                Projeto de revitalização do Mercado Produtor promete impulsionar a agricultura familiar local
+                            </h3>
+                            <span class="text-[11px] text-slate-500"><i class="far fa-clock mr-1"></i> Há 2 horas</span>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Article 2 -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow cursor-pointer flex gap-4 group" onclick="openArticleModal(3)">
+                        <div class="w-28 h-24 rounded-lg overflow-hidden shrink-0 bg-slate-100">
+                            <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=400&q=80" alt="Hospital São Paulo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        </div>
+                        <div class="flex flex-col justify-between">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-brand-red">Saúde & Cidade</span>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug">
+                                Hospital São Paulo amplia leitos e inaugura nova ala de atendimento especializado
+                            </h3>
+                            <span class="text-[11px] text-slate-500"><i class="far fa-clock mr-1"></i> Há 4 horas</span>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Article 3 -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow cursor-pointer flex gap-4 group" onclick="openArticleModal(4)">
+                        <div class="w-28 h-24 rounded-lg overflow-hidden shrink-0 bg-slate-100">
+                            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=400&q=80" alt="Festival Gastronômico" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        </div>
+                        <div class="flex flex-col justify-between">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-brand-red">Cultura</span>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug">
+                                Festival Gastronômico da Zona da Mata reúne dezenas de chefs no Centro de Muriaé
+                            </h3>
+                            <span class="text-[11px] text-slate-500"><i class="far fa-clock mr-1"></i> Há 6 horas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN LAYOUT GRID (NEWS FEED + SIDEBAR) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- LEFT COLUMN: MAIN NEWS FEED (8 Cols) -->
+            <div class="lg:col-span-8">
+                <!-- Category Section Title -->
+                <div class="flex items-center justify-between border-b-2 border-slate-200 pb-3 mb-6">
+                    <h3 id="feed-title" class="text-xl font-black text-navy-900 uppercase tracking-wide flex items-center">
+                        <span class="w-3 h-6 bg-brand-red rounded-sm mr-2"></span> Feed de Notícias
+                    </h3>
+                    <span id="news-count" class="text-xs text-slate-500 font-medium">Exibindo todas as matérias</span>
+                </div>
+
+                <!-- ARTICLES LIST GRID -->
+                <div id="articles-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Dynamic Articles will be rendered here by Javascript -->
+                </div>
+
+                <!-- Empty state for search/filters -->
+                <div id="no-results" class="hidden text-center py-12 bg-white rounded-xl border border-slate-200">
+                    <i class="fas fa-search-minus text-4xl text-slate-300 mb-3"></i>
+                    <h4 class="text-lg font-bold text-slate-700">Nenhuma notícia encontrada</h4>
+                    <p class="text-sm text-slate-500 mt-1">Tente pesquisar outros termos ou escolha outra categoria.</p>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: SIDEBAR (4 Cols) -->
+            <aside class="lg:col-span-4 space-y-8">
+
+                <!-- WEATHER WIDGET MODULE -->
+                <div class="bg-gradient-to-br from-navy-900 to-slate-800 text-white rounded-2xl p-5 shadow-md border border-slate-700">
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-700/80 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-temperature-high text-brand-red"></i>
+                            <h4 class="font-bold text-sm tracking-wide uppercase text-slate-100">Previsão em Muriaé</h4>
+                        </div>
+                        <span class="text-[11px] bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full border border-slate-600">Tempo Real</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between my-2">
+                        <div>
+                            <div class="text-4xl font-extrabold text-white">28°C</div>
+                            <p class="text-xs text-slate-300 mt-1 font-medium"><i class="fas fa-sun text-yellow-400 mr-1"></i> Sol com poucas nuvens</p>
+                        </div>
+                        <div class="text-right text-xs text-slate-300 space-y-1">
+                            <div><i class="fas fa-tint text-blue-400 w-4"></i> Umidade: <span class="font-bold text-white">62%</span></div>
+                            <div><i class="fas fa-wind text-slate-400 w-4"></i> Vento: <span class="font-bold text-white">12 km/h</span></div>
+                            <div><i class="fas fa-arrow-up text-red-400 w-4"></i> Max: <span class="font-bold text-white">31°C</span> / Min: <span class="font-bold text-white">19°C</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Forecast preview -->
+                    <div class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-700/60 text-center text-xs">
+                        <div class="bg-slate-800/60 rounded-lg p-2">
+                            <span class="text-slate-400 block text-[10px]">Amanhã</span>
+                            <i class="fas fa-cloud-sun text-yellow-400 my-1"></i>
+                            <span class="block font-bold">29°C</span>
+                        </div>
+                        <div class="bg-slate-800/60 rounded-lg p-2">
+                            <span class="text-slate-400 block text-[10px]">Sexta</span>
+                            <i class="fas fa-cloud-showers-heavy text-blue-400 my-1"></i>
+                            <span class="block font-bold">25°C</span>
+                        </div>
+                        <div class="bg-slate-800/60 rounded-lg p-2">
+                            <span class="text-slate-400 block text-[10px]">Sábado</span>
+                            <i class="fas fa-sun text-yellow-400 my-1"></i>
+                            <span class="block font-bold">30°C</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAIS LIDAS / MOST READ -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+                    <div class="flex items-center space-x-2 mb-4 border-b border-slate-100 pb-3">
+                        <i class="fas fa-fire text-brand-red text-lg"></i>
+                        <h4 class="font-extrabold text-base text-navy-900 uppercase tracking-wide">Mais Lidas</h4>
+                    </div>
+
+                    <div class="space-y-4" id="most-read-container">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <!-- INTERACTIVE CIVIC POLL MODULE -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+                    <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+                        <span class="text-[10px] font-bold text-brand-red uppercase tracking-wider bg-red-50 px-2 py-0.5 rounded">Enquete Pública</span>
+                        <i class="fas fa-poll text-slate-400"></i>
+                    </div>
+
+                    <h4 class="font-bold text-sm text-navy-900 mb-3 leading-snug">
+                        Na sua opinião, qual área prioritária deve receber mais investimentos no orçamento municipal de Muriaé em 2026?
+                    </h4>
+
+                    <!-- Form / Poll Options -->
+                    <div id="poll-options" class="space-y-2.5 my-3">
+                        <label class="flex items-center p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors text-xs text-slate-700">
+                            <input type="radio" name="muriae-poll" value="saude" class="text-brand-red focus:ring-brand-red mr-2.5">
+                            <span>Saúde e ampliação de postos nos bairros</span>
+                        </label>
+                        <label class="flex items-center p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors text-xs text-slate-700">
+                            <input type="radio" name="muriae-poll" value="infra" class="text-brand-red focus:ring-brand-red mr-2.5">
+                            <span>Asfalto e obras de contenção de encostas</span>
+                        </label>
+                        <label class="flex items-center p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors text-xs text-slate-700">
+                            <input type="radio" name="muriae-poll" value="seguranca" class="text-brand-red focus:ring-brand-red mr-2.5">
+                            <span>Segurança e iluminação pública inteligente</span>
+                        </label>
+                        <label class="flex items-center p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors text-xs text-slate-700">
+                            <input type="radio" name="muriae-poll" value="educacao" class="text-brand-red focus:ring-brand-red mr-2.5">
+                            <span>Educação e creches em tempo integral</span>
+                        </label>
+
+                        <button onclick="submitPollVote()" class="w-full mt-3 bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs py-2.5 px-4 rounded-lg transition-colors shadow">
+                            Votar Agora
+                        </button>
+                    </div>
+
+                    <!-- Poll Results (Hidden initially) -->
+                    <div id="poll-results" class="hidden space-y-3 my-3">
+                        <div>
+                            <div class="flex justify-between text-xs font-medium text-slate-700 mb-1">
+                                <span>Saúde Municipal</span>
+                                <span class="font-bold text-brand-red">42%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="bg-brand-red h-2 rounded-full" style="width: 42%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-medium text-slate-700 mb-1">
+                                <span>Infraestrutura & Encostas</span>
+                                <span class="font-bold text-slate-800">31%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="bg-navy-800 h-2 rounded-full" style="width: 31%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-medium text-slate-700 mb-1">
+                                <span>Educação & Creches</span>
+                                <span class="font-bold text-slate-800">17%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="bg-slate-400 h-2 rounded-full" style="width: 17%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-medium text-slate-700 mb-1">
+                                <span>Segurança Pública</span>
+                                <span class="font-bold text-slate-800">10%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="bg-slate-300 h-2 rounded-full" style="width: 10%"></div>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-400 text-center mt-3">Total de votos registrados: 1.482 votos</p>
+                    </div>
+                </div>
+
+                <!-- EDITORIAL AD BANNER PLACEHOLDER -->
+                <div class="bg-slate-200 rounded-2xl p-6 text-center border border-dashed border-slate-300">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Publicidade Fictícia</span>
+                    <p class="text-xs font-bold text-slate-600">Espaço Reservado para Anunciantes de Muriaé</p>
+                    <p class="text-[11px] text-slate-400 mt-1">Apoie o jornalismo regional</p>
+                </div>
+
+            </aside>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-navy-950 text-slate-400 mt-16 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <div class="bg-brand-red text-white p-1.5 rounded">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <span class="text-xl font-black text-white">PORTAL MURIAÉ</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        O principal portal de notícias fictício criado exclusivamente para fins demonstrativos e educacionais sobre Muriaé e a região da Zona da Mata mineira.
+                    </p>
+                </div>
+
+                <div>
+                    <h5 class="text-white font-bold text-sm mb-3 uppercase tracking-wider">Editorias</h5>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#" onclick="filterCategory('Cidade')" class="hover:text-white transition-colors">Cidade & Bairros</a></li>
+                        <li><a href="#" onclick="filterCategory('Região')" class="hover:text-white transition-colors">Zona da Mata</a></li>
+                        <li><a href="#" onclick="filterCategory('Política')" class="hover:text-white transition-colors">Política Local</a></li>
+                        <li><a href="#" onclick="filterCategory('Economia')" class="hover:text-white transition-colors">Economia & Negócios</a></li>
+                        <li><a href="#" onclick="filterCategory('Esporte')" class="hover:text-white transition-colors">Esportes Regionais</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-white font-bold text-sm mb-3 uppercase tracking-wider">Serviços</h5>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#" class="hover:text-white transition-colors">Previsão do Tempo completa</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Horários de Ônibus de Muriaé</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Telefones de Emergência</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Necrologia e Notas</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-white font-bold text-sm mb-3 uppercase tracking-wider">Aviso Acadêmico</h5>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Todo o conteúdo deste website é inteiramente simulado e fictício. Nenhuma das notícias deve ser interpretada como fato real.
+                    </p>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-6 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+                <p>&copy; 2026 Portal Muriaé Fictício - Todos os direitos reservados.</p>
+                <p class="mt-2 md:mt-0 font-semibold text-brand-red">PROJETO EDUCACIONAL DE TREINAMENTO</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ========================================== -->
+    <!-- READ FULL ARTICLE MODAL (POPUP) -->
+    <!-- ========================================== -->
+    <div id="article-modal" class="fixed inset-0 z-[10000] hidden overflow-y-auto bg-slate-950/80 backdrop-blur-sm flex justify-center items-start p-3 sm:p-6 transition-opacity">
+        <div class="bg-white rounded-2xl max-w-3xl w-full my-8 shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 border border-slate-200">
+            
+            <!-- Close Modal Button -->
+            <button onclick="closeArticleModal()" class="absolute top-4 right-4 z-20 bg-slate-900/70 hover:bg-slate-900 text-white rounded-full w-9 h-9 flex items-center justify-center transition-all shadow-md">
+                <i class="fas fa-times text-base"></i>
+            </button>
+
+            <!-- Article Header Image -->
+            <div class="relative h-64 sm:h-80 w-full bg-slate-900">
+                <img id="modal-img" src="" alt="" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                <div class="absolute bottom-4 left-6 right-6">
+                    <span id="modal-badge" class="bg-brand-red text-white text-xs font-extrabold uppercase px-3 py-1 rounded-full"></span>
+                </div>
+            </div>
+
+            <!-- Modal Article Body -->
+            <div class="p-6 sm:p-8 space-y-5">
+                <h2 id="modal-title" class="text-2xl sm:text-3xl font-black text-navy-900 leading-tight"></h2>
+                
+                <p id="modal-subtitle" class="text-base sm:text-lg text-slate-600 font-medium italic border-l-4 border-brand-red pl-4 py-1"></p>
+
+                <!-- Metadata author/date -->
+                <div class="flex flex-wrap items-center justify-between text-xs text-slate-500 border-y border-slate-100 py-3 gap-2">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-full bg-navy-900 text-white flex items-center justify-center font-bold">
+                            PM
+                        </div>
+                        <div>
+                            <span id="modal-author" class="block font-bold text-slate-800"></span>
+                            <span id="modal-date"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 text-sm">
+                        <button class="text-slate-400 hover:text-blue-600" title="Compartilhar Facebook"><i class="fab fa-facebook"></i></button>
+                        <button class="text-slate-400 hover:text-green-600" title="Compartilhar WhatsApp"><i class="fab fa-whatsapp"></i></button>
+                        <button class="text-slate-400 hover:text-sky-500" title="Compartilhar Twitter"><i class="fab fa-twitter"></i></button>
+                    </div>
+                </div>
+
+                <!-- Full Story Text -->
+                <div id="modal-content" class="text-slate-700 leading-relaxed space-y-4 text-sm sm:text-base font-normal">
+                    <!-- Text inserted via JS -->
+                </div>
+
+                <!-- Disclaimer box in modal -->
+                <div class="mt-8 p-4 bg-red-50 border border-red-200 rounded-xl text-center">
+                    <p class="text-xs text-brand-red font-bold uppercase">
+                        <i class="fas fa-exclamation-triangle mr-1"></i> Esta publicação é uma simulação de notícias fictícias desenvolvida para fins estritamente pedagógicos.
+                    </p>
+                </div>
+
+                <!-- Comment Section Mock -->
+                <div class="pt-6 border-t border-slate-200">
+                    <h4 class="font-extrabold text-navy-900 text-sm uppercase mb-4">Comentários da Comunidade (2)</h4>
+                    <div class="space-y-3">
+                        <div class="bg-slate-50 p-3 rounded-lg text-xs">
+                            <span class="font-bold text-slate-800">Carlos Silva (Centro):</span>
+                            <p class="text-slate-600 mt-1">Excelente iniciativa para Muriaé! Estávamos precisando de investimentos como esse na região.</p>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-lg text-xs">
+                            <span class="font-bold text-slate-800">Maria Oliveira (Barra):</span>
+                            <p class="text-slate-600 mt-1">Muito bom ver Muriaé avançando e se destacando na Zona da Mata!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Modal Action -->
+            <div class="bg-slate-50 p-4 border-t border-slate-200 text-right">
+                <button onclick="closeArticleModal()" class="bg-navy-900 text-white font-bold text-xs px-5 py-2.5 rounded-lg hover:bg-navy-800 transition-colors">
+                    Fechar Matéria
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT LOGIC & DATABASE OF FICTIVE NEWS -->
+    <!-- ========================================== -->
+    <script>
+        // FICTITIOUS ARTICLES DATABASE
+        const newsData = [
+            {
+                id: 1,
+                title: "Muriaé ganha novo Parque Ecológico com pista de caminhada e reflorestamento na BR-116",
+                subtitle: "Obra modelo tem mais de 45 mil metros quadrados de área verde, lago artificial e iluminação LED sustentável para toda a comunidade.",
+                category: "Cidade",
+                author: "Redação Muriaé Notícias",
+                date: "05 de Novembro de 2026",
+                timeAgo: "Há 25 minutos",
+                image: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=800&q=80",
+                isHero: true,
+                content: `
+                    <p class="first-letter:text-4xl first-letter:font-bold first-letter:text-brand-red first-letter:mr-2 first-letter:float-left">
+                        Foi inaugurado oficialmente na manhã deste dia o mais novo Parque Ecológico de Muriaé, situado às margens do trecho urbano da BR-116. A área verde conta com mais de 45 mil metros quadrados inteiramente recuperados com espécies nativas da Mata Atlântica.
+                    </p>
+                    <p>
+                        O espaço possui infraestrutura moderna, incluindo pista de cooper e caminhada com piso emborrachado sintético de 2,5 km, ciclovia sinalizada, playgrounds infantis inclusivos, academia ao ar livre e um amplo lago artificial para contemplação da fauna aquática local.
+                    </p>
+                    <p>
+                        Segundo os coordenadores do projeto municipal, foram plantadas mais de 3.000 mudas de árvores nativas da região da Zona da Mata. O parque funcionará diariamente das 06h às 21h com monitoramento por câmeras de segurança e iluminação solar LED em toda a sua extensão.
+                    </p>
+                    <p>
+                        Moradores dos bairros vizinhos comemoraram a abertura do espaço, destacando que a iniciativa traz mais qualidade de vida, opções de lazer saudável para famílias e fortalece o compromisso da cidade com a sustentabilidade ambiental.
+                    </p>
+                `
+            },
+            {
+                id: 2,
+                title: "Projeto de revitalização do Mercado Produtor promete impulsionar a agricultura familiar local",
+                subtitle: "Modernização das bancas, novo galpão climatizado e área gastronômica integram plano de expansão do comércio regional.",
+                category: "Economia",
+                author: "Marcos Andrade",
+                date: "05 de Novembro de 2026",
+                timeAgo: "Há 2 horas",
+                image: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=800&q=80",
+                isHero: false,
+                content: `
+                    <p>
+                        O tradicional Mercado Produtor de Muriaé passará por uma ampla reestruturação arquitetônica e logística. O anúncio formal detalhou a criação de mais de 80 box organizados por setores hortifrúti, laticínios artesanais, doces típicos mineiros e artesanato local.
+                    </p>
+                    <p>
+                        O investimento apoiará diretamente centenas de pequenos produtores rurais de Muriaé e municípios vizinhos como Miraí, Barão de Monte Alto e Eugenópolis, facilitando o escoamento de produtos sem intermediários.
+                    </p>
+                    <p>
+                        "Nosso objetivo é transformar o Mercado num polo turístico e econômico de referência em toda a Zona da Mata", destacou a equipe organizadora durante o evento de apresentação do projeto.
+                    </p>
+                `
+            },
+            {
+                id: 3,
+                title: "Hospital São Paulo amplia leitos e inaugura nova ala de atendimento especializado",
+                subtitle: "Unidade ganha 20 novos leitos de UTI e centro de exames computadorizados de última geração.",
+                category: "Cidade",
+                author: "Dra. Juliana Mendes",
+                date: "05 de Novembro de 2026",
+                timeAgo: "Há 4 horas",
+                image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80",
+                isHero: false,
+                content: `
+                    <p>
+                        Em um momento histórico para a saúde pública regional, o Hospital São Paulo em Muriaé entregou hoje as novas instalações do seu complexo de atendimento de alta complexidade.
+                    </p>
+                    <p>
+                        Com a ampliação, a instituição soma mais 20 leitos totalmente equipados com respiradores de ponta e monitores multiparamétricos, além de um novo tomógrafo computadorizado capaz de realizar exames ultrarrápidos.
+                    </p>
+                    <p>
+                        A expectativa é que o tempo de espera para consultas e procedimentos especializados na microrregião seja reduzido em até 40% nos próximos três meses.
+                    </p>
+                `
+            },
+            {
+                id: 4,
+                title: "Festival Gastronômico da Zona da Mata reúne dezenas de chefs no Centro de Muriaé",
+                subtitle: "Evento celebra pratos à base de café, queijos artesanais e carnes com temperos tradicionais mineiros.",
+                category: "Cultura",
+                author: "Lucas Ferreira",
+                date: "04 de Novembro de 2026",
+                timeAgo: "Há 6 horas",
+                image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+                isHero: false,
+                content: `
+                    <p>
+                        Começou nesta semana no Centro de Muriaé a edição de 2026 do Festival Gastronômico Regional. Com a participação de mais de 30 restaurantes, lanchonetes e produtores da Zona da Mata, o evento exalta a riqueza da culinária mineira.
+                    </p>
+                    <p>
+                        Entre as atrações principais estão os workshops de harmonização de cafés especiais cultivados nas serras locais, aulas-show com chefs renomados e apresentações culturais de bandas da cidade.
+                    </p>
+                    <p>
+                        A entrada é gratuita e a expectativa da organização é receber mais de 15 mil visitantes durante os quatro dias de celebração da boa mesa mineira.
+                    </p>
+                `
+            },
+            {
+                id: 5,
+                title: "Obras de contenção e drenagem no bairro Porto entram na fase final em Muriaé",
+                subtitle: "Intervenção estrutural previne alagamentos históricos e garante segurança nas encostas no período chuvoso.",
+                category: "Cidade",
+                author: "Eng. Roberto Paiva",
+                date: "04 de Novembro de 2026",
+                timeAgo: "Há 1 dia",
+                image: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?auto=format&fit=crop&w=800&q=80",
+                isHero: false,
+                content: `
+                    <p>
+                        As importantes obras de engenharia de contenção e drenagem pluvial no bairro Porto e áreas adjacentes atingiram 90% de conclusão nesta semana.
+                    </p>
+                    <p>
+                        O projeto envolveu a instalação de grandes galerias subterrâneas de concreto e muro de gabião reforçado para estabilização de encostas íngremes, sanando antigos problemas enfrentados pela comunidade durante tempestades de verão.
+                    </p>
+                    <p>
+                        Técnicos da Defesa Civil reforçaram que o sistema foi testado e aprovado com sucesso nas simulações de fluxo pluviométrico efetuadas recentemente.
+                    </p>
+                `
+            },
+            {
+                id: 6,
+                title: "Equipe de Futsal de Muriaé vence partida decisiva e avança para a final estadual",
+                subtitle: "Em jogo emocionante no ginásio municipal, time da casa virou o placar nos minutos finais e garantiu vaga.",
+                category: "Esporte",
+                author: "Gabriel Santos",
+                date: "04 de Novembro de 2026",
+                timeAgo: "Há 1 dia",
+                image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80",
+                isHero: false,
+                content: `
+                    <p>
+                        A torcida muriaense lotou o Ginásio Poliesportivo do bairro Barra para apoiar a seleção local de futsal em uma partida histórica contra a forte equipe de Juiz de Fora.
+                    </p>
+                    <p>
+                        Após estar perdendo por 2 a 0 até a metade do segundo tempo, Muriaé reagiu com garra e virou o placar para 4 a 3 nos segundos finais de jogo, garantindo vaga inédita na grande final do Campeonato Mineiro do Interior.
+                    </p>
+                    <p>
+                        A decisão do título está marcada para o próximo sábado, com expectativa de nova casa cheia para apoiar os atletas da cidade.
+                    </p>
+                `
+            },
+            {
+                id: 7,
+                title: "Zona da Mata registra crescimento na produção e exportação de cafés especiais",
+                subtitle: "Produtores da microrregião de Muriaé conquistam prêmios nacionais de sustentabilidade e qualidade de grão.",
+                category: "Economia",
+                author: "Camila Torres",
+                date: "03 de Novembro de 2026",
+                timeAgo: "Há 2 dias",
+                image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80",
+                isHero: false,
+                content: `
+                    <p>
+                        A cafeicultura da Zona da Mata mineira segue acumulando reconhecimentos internacionais. Cooperativas que abrangem Muriaé e municípios vizinhos relataram aumento de 22% nas vendas de lotes de café especial para o mercado externo neste ano.
+                    </p>
+                    <p>
+                        O diferencial dos grãos produzidos nas montanhas locais reside na colheita seletiva manual e nos processos de fermentação natural, que conferem notas florais e frutadas aos cafés.
+                    </p>
+                    <p>
+                        Além do benefício econômico, o setor se destaca pela adoção de práticas agrícolas com selo neutro de emissões de carbono.
+                    </p>
+                `
+            },
+            {
+                id: 8,
+                title: "Encontro Regional de Fanfarras e Bandas de Música agita o fim de semana em Muriaé",
+                subtitle: "Mais de 15 corporações musicais de Minas Gerais e Rio de Janeiro se apresentaram na Praça João Pinheiro.",
+                category: "Cultura",
+                author: "Fernanda Lima",
+                date: "03 de Novembro de 2026",
+                timeAgo: "Há 2 dias",
+                image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+                isHero: false,
+                content: `
+                    <p>
+                        A tradicional Praça João Pinheiro, no coração de Muriaé, foi palco do Encontro Regional de Bandas de Música e Fanfarras. O evento reuniu mais de 600 músicos de diversas idades.
+                    </p>
+                    <p>
+                        O público aplaudiu de pé apresentações que variaram de marchas clássicas até arranjos modernos de MPB e pop internacional executados por instrumentos de sopro e percussão.
+                    </p>
+                    <p>
+                        O festival premiou os destaques nas categorias regência, corpo coreográfico e originalidade de repertório.
+                    </p>
+                `
+            },
+            {
+                id: 9,
+                title: "Câmara Municipal aprova projeto para incentivo ao primeiro emprego de jovens",
+                subtitle: "Programa prevê parcerias com indústrias de confecção e comércio local para cursos técnicos e contratação.",
+                category: "Política",
+                author: "Redação Muriaé",
+                date: "02 de Novembro de 2026",
+                timeAgo: "Há 3 dias",
+                image: "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80",
+                isHero: false,
+                content: `
+                    <p>
+                        Foi aprovado por unanimidade pelos vereadores de Muriaé o projeto de lei que cria o Programa Municipal do Primeiro Emprego. A meta é capacitar e inserir jovens de 16 a 24 anos no mercado de trabalho.
+                    </p>
+                    <p>
+                        As empresas que oferecerem vagas de estágio e aprendizagem em parceria com o município receberão incentivos e isenções fiscais parciais.
+                    </p>
+                    <p>
+                        O setor polo de confecção e vestuário de Muriaé é um dos principais parceiros previstos para a concessão das primeiras oportunidades já a partir do próximo mês.
+                    </p>
+                `
+            }
+        ];
+
+        // TICKER CONTENT ITEMS
+        const tickerItems = [
+            "Muriaé inaugura novo Parque Ecológico sustentável na BR-116",
+            "Previsão do Tempo: Sol entre nuvens com máxima de 31°C hoje em Muriaé",
+            "Hospital São Paulo abre 20 novos leitos de UTI na Zona da Mata",
+            "Futsal de Muriaé garante vaga na grande final do Campeonato Estadual",
+            "Revitalização do Mercado Produtor incentiva agricultura familiar regional"
+        ];
+
+        let currentCategory = 'todos';
+        let currentSearchQuery = '';
+
+        // INITIALIZATION ON WINDOW LOAD
+        window.onload = function() {
+            setRealtimeDate();
+            renderTicker();
+            renderArticles();
+            renderMostRead();
+            setupSearchListener();
+        };
+
+        // Date Display Formatting
+        function setRealtimeDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date();
+            const formatted = today.toLocaleDateString('pt-BR', options);
+            document.getElementById('current-date').innerHTML = `<i class="far fa-calendar-alt text-brand-red mr-1.5"></i> ${formatted.charAt(0).toUpperCase() + formatted.slice(1)}`;
+        }
+
+        // Render Breaking News Ticker
+        function renderTicker() {
+            const tickerContainer = document.getElementById('ticker-content');
+            let html = '';
+            // Duplicate array for infinite scroll smoothness
+            const fullList = [...tickerItems, ...tickerItems];
+            fullList.forEach(item => {
+                html += `
+                    <span class="inline-flex items-center space-x-2">
+                        <i class="fas fa-chevron-right text-brand-red text-[10px]"></i>
+                        <span class="hover:text-white transition-colors cursor-pointer">${item}</span>
+                    </span>
+                    <span class="text-slate-600 font-bold mx-2">•</span>
+                `;
+            });
+            tickerContainer.innerHTML = html;
+        }
+
+        // Render Articles Feed with Filtering
+        function renderArticles() {
+            const container = document.getElementById('articles-container');
+            const noResults = document.getElementById('no-results');
+            const newsCount = document.getElementById('news-count');
+            
+            // Filter by Category and Search query
+            let filtered = newsData.filter(item => {
+                // Ignore hero item from normal list if on 'todos' and no search query active
+                if (currentCategory === 'todos' && !currentSearchQuery && item.isHero) {
+                    return false;
+                }
+
+                const matchesCategory = (currentCategory === 'todos') || (item.category.toLowerCase() === currentCategory.toLowerCase());
+                const matchesSearch = currentSearchQuery === '' || 
+                    item.title.toLowerCase().includes(currentSearchQuery) || 
+                    item.subtitle.toLowerCase().includes(currentSearchQuery) ||
+                    item.category.toLowerCase().includes(currentSearchQuery);
+
+                return matchesCategory && matchesSearch;
+            });
+
+            // Update Highlights Visibility (Hide Hero if searching or filtering specific category)
+            const highlightsSection = document.getElementById('highlights-section');
+            if (currentCategory !== 'todos' || currentSearchQuery !== '') {
+                highlightsSection.classList.add('hidden');
+            } else {
+                highlightsSection.classList.remove('hidden');
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                noResults.classList.remove('hidden');
+                newsCount.innerText = '0 notícias encontradas';
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            newsCount.innerText = `Exibindo ${filtered.length} notícia(s)`;
+
+            let html = '';
+            filtered.forEach(item => {
+                html += `
+                    <article onclick="openArticleModal(${item.id})" class="bg-white rounded-xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between cursor-pointer group">
+                        <div>
+                            <div class="relative h-48 overflow-hidden bg-slate-100">
+                                <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <span class="absolute top-3 left-3 bg-navy-900/90 text-white text-[10px] font-extrabold uppercase px-2.5 py-1 rounded shadow">
+                                    ${item.category}
+                                </span>
+                            </div>
+                            <div class="p-4 sm:p-5">
+                                <h3 class="font-extrabold text-base sm:text-lg text-slate-900 group-hover:text-brand-red transition-colors leading-snug mb-2">
+                                    ${item.title}
+                                </h3>
+                                <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                                    ${item.subtitle}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="px-4 sm:px-5 pb-4 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+                            <span><i class="far fa-clock mr-1"></i> ${item.timeAgo}</span>
+                            <span class="font-semibold text-brand-red group-hover:underline">Ler matéria <i class="fas fa-arrow-right text-[9px] ml-0.5"></i></span>
+                        </div>
+                    </article>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Render Most Read Articles List
+        function renderMostRead() {
+            const container = document.getElementById('most-read-container');
+            const sorted = [...newsData].slice(0, 5); // Take first 5 items
+            let html = '';
+
+            sorted.forEach((item, index) => {
+                html += `
+                    <div onclick="openArticleModal(${item.id})" class="flex items-start space-x-3 cursor-pointer group py-1.5 border-b border-slate-100 last:border-none">
+                        <span class="text-2xl font-black text-slate-300 group-hover:text-brand-red transition-colors leading-none w-6 text-center">
+                            ${index + 1}
+                        </span>
+                        <div>
+                            <span class="text-[9px] font-extrabold uppercase text-brand-red tracking-wider">${item.category}</span>
+                            <h5 class="text-xs font-bold text-slate-800 group-hover:text-brand-red transition-colors line-clamp-2 leading-snug">
+                                ${item.title}
+                            </h5>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Filter Category Handler
+        function filterCategory(cat) {
+            currentCategory = cat;
+            
+            // Update active state of buttons
+            const buttons = document.querySelectorAll('.cat-btn');
+            buttons.forEach(btn => {
+                if (btn.innerText.toLowerCase().includes(cat.toLowerCase()) || (cat === 'todos' && btn.innerText.includes('Últimas'))) {
+                    btn.className = "cat-btn active font-semibold text-xs sm:text-sm whitespace-nowrap px-3 py-1.5 rounded-md text-white bg-brand-red transition-all";
+                } else {
+                    btn.className = "cat-btn font-medium text-xs sm:text-sm whitespace-nowrap px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-all";
+                }
+            });
+
+            const feedTitle = document.getElementById('feed-title');
+            if (cat === 'todos') {
+                feedTitle.innerHTML = `<span class="w-3 h-6 bg-brand-red rounded-sm mr-2"></span> Feed de Notícias`;
+            } else {
+                feedTitle.innerHTML = `<span class="w-3 h-6 bg-brand-red rounded-sm mr-2"></span> Categoria: ${cat}`;
+            }
+
+            renderArticles();
+        }
+
+        // Setup Search Listener
+        function setupSearchListener() {
+            const searchInput = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-search');
+            const searchStatusBar = document.getElementById('search-status-bar');
+            const searchKeyword = document.getElementById('search-keyword');
+
+            searchInput.addEventListener('input', (e) => {
+                currentSearchQuery = e.target.value.trim().toLowerCase();
+                if (currentSearchQuery !== '') {
+                    clearBtn.classList.remove('hidden');
+                    searchStatusBar.classList.remove('hidden');
+                    searchKeyword.innerText = `"${e.target.value}"`;
+                } else {
+                    clearBtn.classList.add('hidden');
+                    searchStatusBar.classList.add('hidden');
+                }
+                renderArticles();
+            });
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.value = '';
+            currentSearchQuery = '';
+            document.getElementById('clear-search').classList.add('hidden');
+            document.getElementById('search-status-bar').classList.add('hidden');
+            renderArticles();
+        }
+
+        // Poll Voting Functionality
+        function submitPollVote() {
+            const selectedOption = document.querySelector('input[name="muriae-poll"]:checked');
+            if (!selectedOption) {
+                alert("Por favor, selecione uma opção para votar na enquete fictícia.");
+                return;
+            }
+
+            document.getElementById('poll-options').classList.add('hidden');
+            document.getElementById('poll-results').classList.remove('hidden');
+        }
+
+        // Open Full Article Modal
+        function openArticleModal(articleId) {
+            const article = newsData.find(item => item.id === articleId);
+            if (!article) return;
+
+            document.getElementById('modal-img').src = article.image;
+            document.getElementById('modal-badge').innerText = article.category;
+            document.getElementById('modal-title').innerText = article.title;
+            document.getElementById('modal-subtitle').innerText = article.subtitle;
+            document.getElementById('modal-author').innerText = article.author;
+            document.getElementById('modal-date').innerText = `${article.date} • ${article.timeAgo}`;
+            document.getElementById('modal-content').innerHTML = article.content;
+
+            const modal = document.getElementById('article-modal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        // Close Full Article Modal
+        function closeArticleModal() {
+            const modal = document.getElementById('article-modal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+
+        // Close Modal when clicking outside container
+        window.onclick = function(event) {
+            const modal = document.getElementById('article-modal');
+            if (event.target === modal) {
+                closeArticleModal();
+            }
+        };
+    </script>
+</body>
+</html>
